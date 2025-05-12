@@ -1,0 +1,31 @@
+name: Deploy static site
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run simple test
+        run: |
+          # Проверим, что index.html существует и не пустой
+          if [[ -s index.html ]]; then
+            echo "index.html есть и файл не пустой"
+          else
+            echo "index.html отсутствует или пустой" >&2
+            exit 1
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
